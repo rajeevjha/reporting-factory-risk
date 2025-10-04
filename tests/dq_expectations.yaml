@@ -1,0 +1,7 @@
+expectations:
+  - name: fico_range_valid
+    table: ${CATALOG}.silver.borrowers
+    check: "fico_score BETWEEN 300 AND 850"
+  - name: dti_valid
+    table: ${CATALOG}.silver.borrowers
+    check: "dti BETWEEN 0 AND 100"

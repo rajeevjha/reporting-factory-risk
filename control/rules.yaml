@@ -1,0 +1,8 @@
+# Optional Git-managed rules file (sync into control.risk_rules if desired)
+- name: fico_low
+  segment: retail
+  when: "f.fico_score < 620"
+  set:
+    risk_band: "High"
+  priority: 10
+  enabled: true

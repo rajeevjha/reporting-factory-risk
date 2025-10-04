@@ -1,0 +1,50 @@
+bundle:
+  name: reporting-factory-risk
+
+workspace:
+  host: https://<YOUR-DATABRICKS-WORKSPACE-URL>
+
+targets:
+  dev:
+    default: true
+    resources:
+      jobs:
+        rf_build_and_approve:
+          name: RF Build & Approve
+          tasks:
+            - task_key: ingest_bronze
+              notebook_task: { notebook_path: notebooks/00_ingest_bronze.ipynb }
+              new_cluster: { spark_version: "<SPARK_VERSION>", num_workers: <NUM_WORKERS>, node_type_id: "<NODE_TYPE_ID>" }
+              # Alternatively: existing_cluster_id: "<EXISTING_CLUSTER_ID>"
+            - task_key: silver
+              depends_on: [{task_key: ingest_bronze}]
+              notebook_task: { notebook_path: notebooks/10_build_silver.ipynb }
+              new_cluster: { spark_version: "<SPARK_VERSION>", num_workers: <NUM_WORKERS>, node_type_id: "<NODE_TYPE_ID>" }
+            - task_key: features
+              depends_on: [{task_key: silver}]
+              notebook_task: { notebook_path: notebooks/20_features_gold.ipynb }
+              new_cluster: { spark_version: "<SPARK_VERSION>", num_workers: <NUM_WORKERS>, node_type_id: "<NODE_TYPE_ID>" }
+            - task_key: apply_rules
+              depends_on: [{task_key: features}]
+              notebook_task: { notebook_path: notebooks/30_apply_rules_sql.ipynb }
+              new_cluster: { spark_version: "<SPARK_VERSION>", num_workers: <NUM_WORKERS>, node_type_id: "<NODE_TYPE_ID>" }
+            - task_key: build_report
+              depends_on: [{task_key: apply_rules}]
+              notebook_task: { notebook_path: notebooks/40_build_report.ipynb }
+              new_cluster: { spark_version: "<SPARK_VERSION>", num_workers: <NUM_WORKERS>, node_type_id: "<NODE_TYPE_ID>" }
+      dashboards:
+        lakeview_risk_report:
+          path: dashboards/lakeview_risk_report.dbdash.json
+      apps:
+        rule_builder:
+          name: RF Rule Builder
+          path: apps/streamlit_rule_builder.ipynb
+
+variables:
+  CATALOG: <CATALOG_NAME>                  # e.g., reporting_factory
+  SCHEMA_BRONZE: bronze
+  SCHEMA_SILVER: silver
+  SCHEMA_GOLD: gold
+  SCHEMA_CONTROL: control
+  RAW_PATH: "<ADLS_RAW_LENDING_CLUB_PATH>" # e.g., abfss://<container>@<acct>.dfs.core.windows.net/raw/lending_club/
+  SQL_WAREHOUSE_ID: "<SQL_WAREHOUSE_ID>"

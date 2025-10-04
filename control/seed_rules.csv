@@ -1,0 +1,5 @@
+rule_id,name,segment,condition_sql,impact_column,impact_value,priority,enabled,effective_from,effective_to,owner,notes
+R1,fico_low,retail,"f.fico_score < 620","risk_band","High",10,true,2024-01-01,,risk_ops,Baseline threshold
+R2,dti_high,retail,"f.dti >= 40","risk_points","+20",20,true,2024-01-01,,risk_ops,High DTI penalty
+R3,grading_A_override,all,"f.grade IN ('A','B') AND f.dti < 30","risk_band","Low",30,true,2024-01-01,,policy,Trust high grade
+R4,utilization_very_high,corporate,"f.utilization > 85","risk_points","+15",40,true,2024-01-01,,policy,Corp util penalty

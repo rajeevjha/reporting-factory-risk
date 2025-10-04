@@ -1,0 +1,10 @@
+{
+  "$schema": "https://databricks.com/schemas/v1/lakeview-dashboard.json",
+  "version": "1.0",
+  "displayName": "Risk Profiling – Reporting Factory",
+  "description": "Draft vs Approved KPIs and drill-downs",
+  "tiles": [
+    {"type":"query","title":"Loans Total (Draft)","query":"SELECT value FROM ${CATALOG}.gold.report_facts WHERE metric='loans_total' ORDER BY report_run_id DESC LIMIT 1"},
+    {"type":"query","title":"Loans Total (Approved)","query":"SELECT value FROM ${CATALOG}.gold.report_facts_approved_latest WHERE metric='loans_total'"}
+  ]
+}

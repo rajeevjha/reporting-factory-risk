@@ -1,10 +1,19 @@
-USE CATALOG ${CATALOG};
+USE CATALOG reporting_factory_risk_profile;
 USE SCHEMA gold;
 
 CREATE OR REPLACE TABLE gold.features AS
 SELECT
-  l.loan_id, l.borrower_id, l.loan_amount, l.interest_rate, l.term, l.grade, l.issue_date,
-  b.fico_score, b.dti, b.annual_income, b.utilization,
-  CASE WHEN l.loan_amount >= 25000 THEN 'corporate' ELSE 'retail' END AS segment
-FROM ${CATALOG}.silver.loans l
-LEFT JOIN ${CATALOG}.silver.borrowers b USING (borrower_id);
+  l.loan_id,
+  l.borrower_id,
+  b.dti,
+  b.fico_score,
+  b.utilization,
+  l.grade,
+  l.loan_amount,
+  l.interest_rate,
+  l.term_months AS term,      -- ← was l.term
+  l.issue_date,
+  b.annual_income
+FROM silver.loans AS l
+JOIN silver.borrowers AS b
+  ON l.borrower_id = b.borrower_id;

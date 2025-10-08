@@ -3,3 +3,10 @@ command: [
   "run",
   "app.py"
 ]
+env:
+  - name: 'OPENAI_API_KEY'
+    value: '{{secrets/adls-riskprofile-secrets:openapi-riskprofile-key}}'
+  - name: 'DATABRICKS_HTTP_PATH'
+    value: '/sql/1.0/warehouses/5aed87c2fa2d4a3f'
+  - name: 'CATALOG'
+    value: 'reporting_factory_risk_profile'

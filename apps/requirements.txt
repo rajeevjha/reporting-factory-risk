@@ -1,1 +1,8 @@
-streamlit==1.38.0
+databricks-sdk
+databricks-sql-connector
+streamlit
+requests
+pandas
+openai
+pyarrow
+pyspark
